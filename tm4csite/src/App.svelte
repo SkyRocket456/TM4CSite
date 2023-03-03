@@ -1,47 +1,69 @@
 <script>
     import svelteLogo from './assets/svelte.svg'
     import Counter from './lib/Counter.svelte'
+
+    let temperature;
+    let motion;
+    let humidity;
+
+    function getTempFromBackend() {
+        fetch("./temp")
+            .then(d => d.text())
+            .then(d => (temperature = d));
+
+        setTimeout(getTempFromBackend, 1000);
+    }
+
+
+    function getMotionFromBackend() {
+        fetch("./motion")
+            .then(d => d.text())
+            .then(d => (motion = d));
+
+        setTimeout(getMotionFromBackend, 1000);
+    }
+
+    function getHumidityFromBackend() {
+        fetch("./humidity")
+            .then(d => d.text())
+            .then(d => (humidity = d));
+
+        setTimeout(getHumidityFromBackend, 1000);
+    }
+
+    getHumidityFromBackend();
+    getTempFromBackend();
+    getMotionFromBackend();
+
+
 </script>
 
 <main>
-    <h1>I15 Home System</h1>
-    <button class="card">
-        Temperature: 999
-    </button>
-    <button class="card">
-        Humidity: 999
-    </button>
+    <h1>I15's Custom TM4C Home System</h1>
 
-    <button class="card">
-        Motion: None
-    </button>
-
+    <h2>
+        Temperature: {temperature} Degrees Fahrenheit
+    </h2>
+    <h2>
+        Motion Reading: {motion}
+    </h2>
+    <h2>
+        Humidity Level: {humidity} %rh
+    </h2>
 
     <p>
-        I15 LTE Cat M1/NB1 Cellular Gateway for TI Launchpad
+        Check out <a href="https://github.com/SkyRocket456/TM4CSite" target="_blank" rel="noreferrer">the
+        repository </a> for
+        the website here!
     </p>
 
     <p class="read-the-docs">
-        Created by the Software Team
+        Created by the I15 Software Team
     </p>
+
 </main>
 
 <style>
-    .logo {
-        height: 6em;
-        padding: 1.5em;
-        will-change: filter;
-        transition: filter 300ms;
-    }
-
-    .logo:hover {
-        filter: drop-shadow(0 0 2em #646cffaa);
-    }
-
-    .logo.svelte:hover {
-        filter: drop-shadow(0 0 2em #ff3e00aa);
-    }
-
     .read-the-docs {
         color: #888;
     }
