@@ -1,6 +1,8 @@
 from flask import Flask, send_from_directory
 import random
 
+from mqtt_client import *
+
 app = Flask(__name__)
 
 
@@ -26,7 +28,7 @@ def get_temp():
 @app.route("/motion")
 def get_motion():
     num = (random.randint(0, 1))
-    if num is 0:
+    if num == 0:
         return "None Detected"
     else:
         return "Motion has been detected!"
@@ -39,5 +41,6 @@ def get_humidity():
 
 
 if __name__ == "__main__":
-    # Run flask server
-    app.run(debug=True)
+
+
+    initialize()
