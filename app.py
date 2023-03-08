@@ -16,11 +16,13 @@ def home(path):
     return send_from_directory('tm4csite/dist', path)
 
 
+# Return the current temperature reading
 @app.route("/temp")
 def get_temp():
     return str(random.randint(0, 100))
 
 
+# Return the current motion reading
 @app.route("/motion")
 def get_motion():
     num = (random.randint(0, 1))
@@ -30,10 +32,12 @@ def get_motion():
         return "Motion has been detected!"
 
 
+# Return the current temperature reading
 @app.route("/humidity")
 def get_humidity():
     return str(random.randint(0, 100))
 
 
 if __name__ == "__main__":
+    # Run flask server
     app.run(debug=True)

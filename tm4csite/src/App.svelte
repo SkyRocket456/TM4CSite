@@ -1,7 +1,4 @@
 <script>
-    import svelteLogo from './assets/svelte.svg'
-    import Counter from './lib/Counter.svelte'
-
     let temperature;
     let motion;
     let humidity;
@@ -34,8 +31,6 @@
     getHumidityFromBackend();
     getTempFromBackend();
     getMotionFromBackend();
-
-
 </script>
 
 <main>
@@ -53,8 +48,7 @@
 
     <p>
         Check out <a href="https://github.com/SkyRocket456/TM4CSite" target="_blank" rel="noreferrer">the
-        repository </a> for
-        the website here!
+        repository </a> for the website here!
     </p>
 
     <p class="read-the-docs">
