@@ -48,19 +48,19 @@ def initialize():
     # userdata is user defined data of any type, updated by user_data_set()
     # client_id is the given name of the client
     client = paho.Client(client_id="website", userdata=None, protocol=paho.MQTTv5)
+
+    # setting callbacks, use separate functions like above for better visibility
     client.on_connect = on_connect
+    client.on_subscribe = on_subscribe
+    client.on_message = on_message
+    client.on_publish = on_publish
 
     # enable TLS for secure connection
     client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
     # set username and password
-    client.username_pw_set("i15tm4c", "colby123")
+    client.username_pw_set("TM4CSeniorDesign", "ColbyMom123")
     # connect to HiveMQ Cloud on port 8883 (default for MQTT)
-    client.connect("d946b1cbf6cf41e9b465c2c080d004be.s2.eu.hivemq.cloud", 8883)
-
-    # setting callbacks, use separate functions like above for better visibility
-    client.on_subscribe = on_subscribe
-    client.on_message = on_message
-    client.on_publish = on_publish
+    client.connect("6a403dee87904410bf73b0994362da46.s2.eu.hivemq.cloud", 8883)
 
     # subscribe to all topics of encyclopedia by using the wildcard "#"
     client.subscribe("sensor/temperature", qos=1)
@@ -74,4 +74,7 @@ def initialize():
 
     # loop_forever for simplicity, here you need to stop the loop manually
     # you can also use loop_start and loop_stop
-    client.loop_forever()
+    client.loop_start()
+
+    while True:
+        pass
