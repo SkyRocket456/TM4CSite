@@ -14,11 +14,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
+# Light: 0 - 2490
+# Temperature: 0 - 3190
+# Motion: 0 or 1
+
+
 import time
 import paho.mqtt.client as paho
 from paho import mqtt
 
+
+#
 
 # setting callbacks for different events to see if it works, print the message etc.
 def on_connect(client, userdata, flags, rc, properties=None):
