@@ -1,87 +1,84 @@
-# enable TLS client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
-
+# # Copyright (c) 2010,2011 Roger Light <roger@atchoo.org>
+# # All rights reserved.
+# #
+# # Redistribution and use in source and binary forms, with or without
+# # modification, are permitted provided that the following conditions are met:
+# #
+# # 1. Redistributions of source code must retain the above copyright notice,
+# #   this list of conditions and the following disclaimer.
+# # 2. Redistributions in binary form must reproduce the above copyright
+# #   notice, this list of conditions and the following disclaimer in the
+# #   documentation and/or other materials provided with the distribution.
+# # 3. Neither the name of mosquitto nor the names of its
+# #   contributors may be used to endorse or promote products derived from
+# #   this software without specific prior written permission.
+# #
+# # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# # ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# # SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# # POSSIBILITY OF SUCH DAMAGE.
 #
-# Copyright 2021 HiveMQ GmbH
+# import socket
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# import paho.mqtt.client as mqtt
+# import os
+# from urllib.parse import urlparse
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# Light: 0 - 2490
-# Temperature: 0 - 3190
-# Motion: 0 or 1
-
-
-import time
-import paho.mqtt.client as paho
-from paho import mqtt
-
-
+# # Define event callbacks
+# def on_connect(client, userdata, flags, rc):
+#     print("Connected with result code " + str(rc))
+#     # Subscribing in on_connect() means that if we lose the connection and
+#     # reconnect then subscriptions will be renewed.
+#     client.subscribe("sensor/motion")
+#     client.subscribe("sensor/light")
+#     client.subscribe("sensor/moisture")
 #
-
-# setting callbacks for different events to see if it works, print the message etc.
-def on_connect(client, userdata, flags, rc, properties=None):
-    print("CONNACK received with code %s." % rc)
-
-
-# with this callback you can see if your publish was successful
-def on_publish(client, userdata, mid, properties=None):
-    print("mid: " + str(mid))
-
-
-# print which topic was subscribed to
-def on_subscribe(client, userdata, mid, granted_qos, properties=None):
-    print("Subscribed: " + str(mid) + " " + str(granted_qos))
-
-
-# print message, useful for checking if it was successful
-def on_message(client, userdata, msg):
-    # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    output = msg.payload.decode()
-    print("TOPIC: " + msg.topic)
-    print("MESSAGE: " + output)
-
-
-def initialize():
-    # using MQTT version 5 here, for 3.1.1: MQTTv311, 3.1: MQTTv31
-    # userdata is user defined data of any type, updated by user_data_set()
-    # client_id is the given name of the client
-    client = paho.Client(client_id="website", userdata=None, protocol=paho.MQTTv5)
-
-    # setting callbacks, use separate functions like above for better visibility
-    client.on_connect = on_connect
-    client.on_subscribe = on_subscribe
-    client.on_message = on_message
-    client.on_publish = on_publish
-
-    # enable TLS for secure connection
-    client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
-    # set username and password
-    client.username_pw_set("TM4CSeniorDesign", "ColbyMom123")
-    # connect to HiveMQ Cloud on port 8883 (default for MQTT)
-    client.connect("6a403dee87904410bf73b0994362da46.s2.eu.hivemq.cloud", 8883)
-
-    # subscribe to all topics of encyclopedia by using the wildcard "#"
-    client.subscribe("sensor/temperature", qos=1)
-    client.subscribe("sensor/humidity", qos=1)
-    client.subscribe("sensor/motion", qos=1)
-
-    # a single publish, this can also be done in loops, etc.
-    client.publish("sensor/temperature", payload="hello malik", qos=1)
-    client.publish("sensor/humidity", payload="hello malik", qos=1)
-    client.publish("sensor/motion", payload="hello malik", qos=1)
-
-    # loop_forever for simplicity, here you need to stop the loop manually
-    # you can also use loop_start and loop_stop
-    client.loop_start()
-
-    while True:
-        pass
+#
+# def on_message(client, obj, msg):
+#     if msg.topic == "sensor/motion":
+#         pass
+#
+#     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+#
+#
+# def on_publish(client, obj, mid):
+#     print("mid: " + str(mid))
+#
+#
+# def on_subscribe(client, obj, mid, granted_qos):
+#     print("Subscribed: " + str(mid) + " " + str(granted_qos))
+#
+#
+# def on_log(client, obj, level, string):
+#     print(string)
+#
+#
+# mqttc = mqtt.Client(transport="websockets")
+# mqttc.tls_set()
+# # Assign event callbacks
+# mqttc.on_message = on_message
+# mqttc.on_connect = on_connect
+# mqttc.on_publish = on_publish
+# mqttc.on_subscribe = on_subscribe
+#
+# # Uncomment to enable debug messages
+# # mqttc.on_log = on_log
+#
+# mqttc.username_pw_set("pljcjeom", "pCWWNWHzPsBk")
+# # Connect
+# mqttc.connect("driver.cloudmqtt.com", 38893)
+#
+# # Continue the network loop, exit when an error occurs
+#
+# mqttc.loop_start()
+#
+# while True:
+#     pass
