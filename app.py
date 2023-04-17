@@ -3,6 +3,8 @@ import random
 import threading
 from flask import Flask, send_from_directory, request
 import paho.mqtt.client as mqtt
+from bitarray import bitarray
+from bitarray.util import ba2int
 
 app = Flask(__name__)
 
@@ -28,7 +30,7 @@ def home(path):
 def get_motion():
     if motion is None:
         return "Motion reading not available"
-    return str(random.randint(0, 1))
+    return motion
 
 
 # Return the current motion reading
@@ -36,7 +38,7 @@ def get_motion():
 def get_light():
     if light is None:
         return "Light reading not available"
-    return str(random.randint(0, 4096))
+    return light
 
 
 # Return the current temperature reading
@@ -44,24 +46,65 @@ def get_light():
 def get_moisture():
     if moisture is None:
         return "Moisture reading not available"
-    return str(random.randint(0, 4096))
+    return moisture
 
 
 @app.route("/pin_control", methods=['POST'])
 def pin_control():
     if request.method == 'POST':
+        b = bitarray()  # create empty bitarray
+
         # Process the data here...
         info = request.data.decode()
 
         # convert to dict
         json_object = json.loads(info)
 
-        pin_type = json_object["pin_type"]
-        pin_number = json_object["pin_number"]
-        signal = json_object["signal"]
-        io = json_object["io"]
+        pin_number = int(json_object["pin_number"])
+        match pin_number:
+            case 0:
+                b.extend([0, 0, 0])
+            case 1:
+                b.extend([0, 0, 1])
+            case 2:
+                b.extend([0, 1, 0])
+            case 3:
+                b.extend([0, 1, 1])
+            case 4:
+                b.extend([1, 0, 0])
+            case 5:
+                b.extend([1, 0, 1])
+            case 6:
+                b.extend([1, 1, 0])
+            case 7:
+                b.extend([1, 1, 1])
+            case _:
+                pass
 
-        print(json_object)
+        pin_type = json_object["pin_type"]
+        match pin_type:
+            case "PA":
+                b.extend([0, 0])
+            case "PB":
+                b.extend([0, 1])
+            case "PC":
+                b.extend([1, 0])
+            case _:
+                pass
+
+        io = json_object["io"]
+        if io == "Input":
+            b.extend([0])
+        else:
+            b.extend([1])
+
+        signal = json_object["signal"]
+        if signal == "Digital":
+            b.extend([0])
+        else:
+            b.extend([1])
+
+        b_int = ba2int(b)
 
     return "1"
 
